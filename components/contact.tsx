@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { useEffect, useState } from "react";
 import SectionHeading from "./section-heading";
 import { motion } from "framer-motion";
 import { useSectionInView } from "@/lib/hooks";
@@ -10,6 +10,13 @@ import toast from "react-hot-toast";
 
 export default function Contact() {
   const { ref } = useSectionInView("Contact");
+  const [email, setEmail] = useState("");
+  useEffect(() => {
+    const data: string | undefined = process.env.EMAIL_ADDRESS;
+    if (typeof data !== "undefined") {
+      setEmail(data);
+    }
+  }, []);
 
   return (
     <motion.section
@@ -27,17 +34,20 @@ export default function Contact() {
       }}
       viewport={{
         once: true,
-      }}
-    >
+      }}>
       <SectionHeading>Contact me</SectionHeading>
 
-      <p className="text-gray-700 -mt-6 dark:text-white/80">
-        Please contact me directly at{" "}
-        <a className="underline" href="mailto:example@gmail.com">
-          kirkrepository@gmail.com
-        </a>{" "}
-        or through this form.
-      </p>
+      {email && (
+        <p className="text-gray-700 -mt-6 dark:text-white/80">
+          Please contact me directly at{" "}
+          <a
+            className="underline"
+            href={`mailto:${email}`}>
+            {email}
+          </a>{" "}
+          or through this form.
+        </p>
+      )}
 
       <form
         className="mt-10 flex flex-col dark:text-black"
@@ -48,10 +58,9 @@ export default function Contact() {
             toast.error(error);
             return;
           }
-
+          console.log(formData);
           toast.success("Email sent successfully!");
-        }}
-      >
+        }}>
         <input
           className="h-14 px-4 rounded-lg borderBlack dark:bg-white dark:bg-opacity-80 dark:focus:bg-opacity-100 transition-all dark:outline-none"
           name="senderEmail"
